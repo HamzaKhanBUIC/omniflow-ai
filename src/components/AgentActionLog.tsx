@@ -14,11 +14,12 @@ interface AgentActionLogProps {
   gitlabIssueUrl?: string | null;
   elasticUrl?: string | null;
   historicalMatchId?: string | null;
+  autoHealingTriggered?: boolean;
   onApprove: () => void;
   onReject: () => void;
 }
 
-export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, elasticUrl, historicalMatchId, onApprove, onReject }: AgentActionLogProps) {
+export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, elasticUrl, historicalMatchId, autoHealingTriggered, onApprove, onReject }: AgentActionLogProps) {
   const [visibleLines, setVisibleLines] = React.useState<string[]>([]);
   const [animationFinished, setAnimationFinished] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -199,6 +200,25 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
                   </span>
                   <span className="px-3 py-1.5 bg-purple-900/30 text-purple-200 text-[10px] font-bold rounded-lg border border-purple-500/50 uppercase">
                     Incident #{historicalMatchId.substring(0, 8)}
+                  </span>
+                </motion.div>
+              )}
+
+              {autoHealingTriggered && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.45 }}
+                  className="mt-2 p-3 bg-red-950/40 border border-red-500/50 rounded-xl flex items-center justify-between shadow-[0_0_15px_rgba(239,68,68,0.2)] relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none"></div>
+                  <span className="text-red-400 text-xs font-mono tracking-wide flex items-center relative z-10 font-bold">
+                    <span className="w-2 h-2 rounded-full bg-red-500 mr-2 animate-ping absolute"></span>
+                    <span className="w-2 h-2 rounded-full bg-red-500 mr-2 relative"></span>
+                    [AUTO-HEALING] Background Storage Cleaner Spawned
+                  </span>
+                  <span className="px-3 py-1.5 bg-red-900/40 text-red-100 text-[9px] font-bold rounded-lg border border-red-500/50 uppercase tracking-widest relative z-10">
+                    Quota Protection Active
                   </span>
                 </motion.div>
               )}

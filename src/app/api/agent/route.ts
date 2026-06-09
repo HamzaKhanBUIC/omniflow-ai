@@ -221,9 +221,17 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
 
       } catch (geminiError) {
         console.error("Gemini API Error:", geminiError);
-        console.log("[AGENT] Triggering automatic failover to Backup Local AI Model to ensure demo continuity!");
+        console.log("[AGENT] Triggering automatic failover and AUTO-HEALING storage...");
         
-        finalAgentAnalysis = `I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing. I am executing backup spatial logic!`;
+        // Asynchronously spawn the cleaner script in the background so it doesn't block the API response
+        import('child_process').then(({ exec }) => {
+          exec('node gemini-auto-storage-cleaner.mjs', (err, stdout) => {
+            if (err) console.error('[AUTO-HEALER] Failed to run cleaner:', err);
+            else console.log('[AUTO-HEALER] Storage cleanup complete:\\n', stdout);
+          });
+        }).catch(e => console.error("Failed to import child_process:", e));
+        
+        finalAgentAnalysis = `I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing. I am executing backup spatial logic and triggering background storage auto-healing!`;
         finalProposedAction = `Deploying Emergency Digital Signage to reroute crowd away from ${targetNodeId}.`;
         finalRoutingPath = [targetNodeId, currentGraph.nodes.find(n => n.id !== targetNodeId)?.id || 'Exit_South'];
         finalDigitalSignageMessage = `URGENT: Proceed to alternative routes. ${problemCategory.toUpperCase()} DETECTED.`;
@@ -296,6 +304,7 @@ ${liveElasticData}
         gitlab_issue_url: gitlabIssueUrl,
         elastic_url: elasticUrl,
         historical_match_id: historicalMatchId,
+        auto_healing_triggered: isFailover, // If failover happened, auto-healer was triggered
         digital_signage_payload: {
           target_screens: [isFailover ? targetNodeId : metric.location_id, 'Approaching_Concourses'],
           message: finalDigitalSignageMessage,

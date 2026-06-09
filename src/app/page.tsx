@@ -102,6 +102,7 @@ export default function Dashboard() {
   const [gitlabIssueUrl, setGitlabIssueUrl] = useState<string | null>(null);
   const [elasticUrl, setElasticUrl] = useState<string | null>(null);
   const [historicalMatchId, setHistoricalMatchId] = useState<string | null>(null);
+  const [autoHealingTriggered, setAutoHealingTriggered] = useState<boolean>(false);
   
   // Create a stable graph representation to allow mutations on approval
   const [displayGraph, setDisplayGraph] = useState<VenueGraph | null>(null);
@@ -126,6 +127,7 @@ export default function Dashboard() {
     setGitlabIssueUrl(null);
     setElasticUrl(null);
     setHistoricalMatchId(null);
+    setAutoHealingTriggered(false);
   };
 
   // Background stream simulation removed to prevent UI jumping.
@@ -246,6 +248,7 @@ export default function Dashboard() {
         setGitlabIssueUrl(data.gitlab_issue_url || null);
         setElasticUrl(data.elastic_url || null);
         setHistoricalMatchId(data.historical_match_id || null);
+        setAutoHealingTriggered(data.auto_healing_triggered || false);
       } else if (data.status === 'error') {
         setAgentAnalysis(`[SYSTEM ERROR] Failed to run AI Analysis: ${data.message || 'Check terminal logs.'}`);
         setSimulationActive(false);
@@ -357,6 +360,7 @@ export default function Dashboard() {
               gitlabIssueUrl={gitlabIssueUrl}
               elasticUrl={elasticUrl}
               historicalMatchId={historicalMatchId}
+              autoHealingTriggered={autoHealingTriggered}
               onApprove={handleApprove}
               onReject={handleReject}
             />
