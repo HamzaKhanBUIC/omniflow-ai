@@ -110,14 +110,14 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
               })}
               
               {/* Added a blinking cursor to show it's waiting for Gemini */}
-              {(visibleLines.length >= terminalLines.length && !analysis) && (
+              {isSimulating && !analysis && (
                  <motion.div 
                    initial={{ opacity: 0 }} 
                    animate={{ opacity: 1 }} 
                    transition={{ repeat: Infinity, duration: 0.8 }}
-                   className="text-blue-400 mt-4 font-bold"
+                   className="text-blue-400 mt-4 font-bold text-xs font-mono"
                  >
-                   {'>'} [GEMINI 3.5] Aggregating context. Generating live spatial execution plan... █
+                   {'>'} [GEMINI 3.1 FLASH LITE] Aggregating context. Generating live spatial execution plan... █
                  </motion.div>
               )}
             </motion.div>

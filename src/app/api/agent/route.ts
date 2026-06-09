@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         console.error(`[AGENT] MCP Connection framework error:`, err);
       }
 
-      console.log(`[AGENT] Dispatching to Gemini 3.5...`);
+      console.log(`[AGENT] Dispatching to Gemini 3.1 Flash Lite...`);
 
       // Determine problem category (mocked from frontend payload for tool params)
       let problemCategory = "bottleneck";
