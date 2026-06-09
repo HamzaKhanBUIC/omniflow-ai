@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="public/favicon.ico" alt="OmniFlow Logo" width="120" />
   <h1>🌊 OmniFlow AI</h1>
   <p><strong>Universal Autonomous Crowd Intelligence & Infrastructure Routing</strong></p>
   <p>
