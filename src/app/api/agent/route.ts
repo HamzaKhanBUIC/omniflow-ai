@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           const elasticClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
           try {
             await elasticClient.connect(elasticTransport);
-            const elasticRes = await elasticClient.callTool({ name: "search", arguments: { index: "*", queryBody: { match_all: {} } } });
+            const elasticRes = await elasticClient.callTool({ name: "search", arguments: { index: "*", queryBody: { query: { match_all: {} } } } });
             liveElasticData = JSON.stringify((elasticRes as any).content);
             console.log(`[ELASTIC] Retrieved real logs!`);
           } catch (e) { console.error(`[ELASTIC] Real query failed, using fallback. Error:`, e); }
