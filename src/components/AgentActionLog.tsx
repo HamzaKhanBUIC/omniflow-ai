@@ -11,11 +11,12 @@ interface AgentActionLogProps {
   digitalSignagePayload?: any;
   isSimulating: boolean;
   terminalLines?: string[];
+  gitlabIssueUrl?: string | null;
   onApprove: () => void;
   onReject: () => void;
 }
 
-export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], onApprove, onReject }: AgentActionLogProps) {
+export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, onApprove, onReject }: AgentActionLogProps) {
   const [visibleLines, setVisibleLines] = React.useState<string[]>([]);
   const [animationFinished, setAnimationFinished] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -152,6 +153,22 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
                   <div className="text-sm text-emerald-100 font-medium bg-emerald-950/40 p-4 rounded-xl border border-emerald-900/50 shadow-inner">
                     {proposedAction}
                   </div>
+                </motion.div>
+              )}
+
+              {gitlabIssueUrl && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 }}
+                  className="mt-4 p-3 bg-slate-900 border border-blue-500/30 rounded-xl flex items-center justify-between"
+                >
+                  <span className="text-blue-400 text-xs font-mono tracking-wide flex items-center">
+                    <CheckCircle size={14} className="mr-2" /> Live GitLab Ticket Generated
+                  </span>
+                  <a href={gitlabIssueUrl} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-blue-900/50 hover:bg-blue-800 text-blue-100 text-[10px] uppercase font-bold rounded-lg border border-blue-500/50 transition-colors cursor-pointer">
+                    View on GitLab ↗
+                  </a>
                 </motion.div>
               )}
 

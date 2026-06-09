@@ -25,6 +25,8 @@ export async function POST(request: Request) {
       let liveArizeData = JSON.stringify({ hallucination_score: 0.01, toxicity: 0.0, safeguard_passed: true });
       let liveGitlabData = JSON.stringify({ issue_created: true, id: "#8492", assignee: "Security Engineering" });
 
+      let gitlabIssueUrl: string | null = null;
+
       try {
         console.log(`[AGENT] Connecting to OFFICIAL Partner MCP Servers...`);
 
@@ -56,7 +58,14 @@ export async function POST(request: Request) {
           try {
             await gitlabClient.connect(gitlabTransport);
             const gitlabRes = await gitlabClient.callTool({ name: "create_issue", arguments: { project_id: "HamzaKhanBUIC/omniflow-ai", title: `Urgent Infrastructure Failure at ${metric.location_id}`, description: "Turnstile API loop detected. Routing AI executed." } });
-            liveGitlabData = JSON.stringify((gitlabRes as any).content);
+            const contentArray = (gitlabRes as any).content;
+            liveGitlabData = JSON.stringify(contentArray);
+            if (contentArray && contentArray.length > 0) {
+              try {
+                const issueJson = JSON.parse(contentArray[0].text);
+                gitlabIssueUrl = issueJson.web_url;
+              } catch (e) {}
+            }
             console.log(`[GITLAB] Created real issue!`);
           } catch (e) { console.error(`[GITLAB] Real creation failed, using fallback. Error:`, e); }
           await gitlabTransport.close();
@@ -189,6 +198,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
           routing_path: geminiOutput.routing_path,
           historical_confidence: 'Live Deduction (100%)',
           hitl_required: true,
+          gitlab_issue_url: gitlabIssueUrl,
           digital_signage_payload: {
             target_screens: [metric.location_id, 'Approaching_Concourses'],
             message: geminiOutput.digital_signage_message,
@@ -207,6 +217,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
           routing_path: [targetNodeId, currentGraph.nodes.find(n => n.id !== targetNodeId)?.id || 'Exit_South'],
           historical_confidence: 'Local Failover Model (85%)',
           hitl_required: true,
+          gitlab_issue_url: gitlabIssueUrl,
           digital_signage_payload: {
             target_screens: [targetNodeId, 'Approaching_Concourses'],
             message: `URGENT: Proceed to alternative routes. ${problemCategory.toUpperCase()} DETECTED.`,
