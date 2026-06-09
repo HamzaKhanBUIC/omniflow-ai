@@ -48,30 +48,6 @@ export async function POST(request: Request) {
           await mongoTransport.close();
         }
 
-        // --- GITLAB OFFICIAL MCP ---
-        if (process.env.GITLAB_PERSONAL_ACCESS_TOKEN) {
-          const gitlabTransport = new StdioClientTransport({
-            command: "npx",
-            args: ["-y", "@modelcontextprotocol/server-gitlab"],
-            env: { ...process.env, GITLAB_PERSONAL_ACCESS_TOKEN: process.env.GITLAB_PERSONAL_ACCESS_TOKEN, GITLAB_API_URL: "https://gitlab.com/api/v4" }
-          });
-          const gitlabClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
-          try {
-            await gitlabClient.connect(gitlabTransport);
-            const gitlabRes = await gitlabClient.callTool({ name: "create_issue", arguments: { project_id: "HamzaKhanBUIC/omniflow-ai", title: `Urgent Infrastructure Failure at ${metric.location_id}`, description: "Turnstile API loop detected. Routing AI executed." } });
-            const contentArray = (gitlabRes as any).content;
-            liveGitlabData = JSON.stringify(contentArray);
-            if (contentArray && contentArray.length > 0) {
-              try {
-                const issueJson = JSON.parse(contentArray[0].text);
-                gitlabIssueUrl = issueJson.web_url;
-              } catch (e) {}
-            }
-            console.log(`[GITLAB] Created real issue!`);
-          } catch (e) { console.error(`[GITLAB] Real creation failed, using fallback. Error:`, e); }
-          await gitlabTransport.close();
-        }
-
         // --- ELASTIC OFFICIAL MCP ---
         if (process.env.ELASTICSEARCH_URL && process.env.ELASTICSEARCH_API_KEY) {
           const elasticTransport = new StdioClientTransport({
@@ -140,6 +116,14 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
         required: ["agent_analysis", "proposed_action", "routing_path", "targetNodeId", "problem_category", "digital_signage_message"],
       };
 
+      let finalAgentAnalysis = "";
+      let finalProposedAction = "";
+      let finalRoutingPath: string[] = [];
+      let finalDigitalSignageMessage = "";
+      let finalProblemCategory = problemCategory;
+      let finalConfidence = "";
+      let isFailover = false;
+
       try {
         const apiKeys = [
           process.env.GEMINI_API_KEY,
@@ -177,7 +161,6 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
               timeoutPromise
             ]);
 
-            // If successful, break out of the retry loop
             break;
           } catch (err: any) {
             console.warn(`[AGENT] API Key failed (${err.message}). Trying backup key...`);
@@ -187,49 +170,100 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
         }
 
         if (!response) {
-          // If we exhaust all backup keys and still have no response, throw to trigger the local failover
           throw lastError || new Error("All backup Gemini API keys failed.");
         }
 
         const geminiOutput = JSON.parse(response.text || '{}');
+        finalAgentAnalysis = geminiOutput.agent_analysis;
+        finalProposedAction = geminiOutput.proposed_action;
+        finalRoutingPath = geminiOutput.routing_path;
+        finalDigitalSignageMessage = geminiOutput.digital_signage_message;
+        finalProblemCategory = geminiOutput.problem_category;
+        finalConfidence = 'Live Deduction (100%)';
 
-        return NextResponse.json({
-          status: 'success',
-          agent_analysis: "[LIVE GEMINI AI] " + geminiOutput.agent_analysis,
-          proposed_action: geminiOutput.proposed_action,
-          routing_path: geminiOutput.routing_path,
-          historical_confidence: 'Live Deduction (100%)',
-          hitl_required: true,
-          gitlab_issue_url: gitlabIssueUrl,
-          elastic_url: elasticUrl,
-          digital_signage_payload: {
-            target_screens: [metric.location_id, 'Approaching_Concourses'],
-            message: geminiOutput.digital_signage_message,
-            problem_category: geminiOutput.problem_category,
-            urgency: 'CRITICAL'
-          }
-        });
       } catch (geminiError) {
         console.error("Gemini API Error:", geminiError);
         console.log("[AGENT] Triggering automatic failover to Backup Local AI Model to ensure demo continuity!");
         
-        return NextResponse.json({
-          status: 'success',
-          agent_analysis: `[FAILOVER AI] I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing (Error: ${(geminiError as any)?.message || 'Unknown'}). I am executing backup spatial logic!`,
-          proposed_action: `Deploying Emergency Digital Signage to reroute crowd away from ${targetNodeId}.`,
-          routing_path: [targetNodeId, currentGraph.nodes.find(n => n.id !== targetNodeId)?.id || 'Exit_South'],
-          historical_confidence: 'Local Failover Model (85%)',
-          hitl_required: true,
-          gitlab_issue_url: gitlabIssueUrl,
-          elastic_url: elasticUrl,
-          digital_signage_payload: {
-            target_screens: [targetNodeId, 'Approaching_Concourses'],
-            message: `URGENT: Proceed to alternative routes. ${problemCategory.toUpperCase()} DETECTED.`,
-            problem_category: problemCategory,
-            urgency: 'CRITICAL'
-          }
-        });
+        finalAgentAnalysis = `I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing. I am executing backup spatial logic!`;
+        finalProposedAction = `Deploying Emergency Digital Signage to reroute crowd away from ${targetNodeId}.`;
+        finalRoutingPath = [targetNodeId, currentGraph.nodes.find(n => n.id !== targetNodeId)?.id || 'Exit_South'];
+        finalDigitalSignageMessage = `URGENT: Proceed to alternative routes. ${problemCategory.toUpperCase()} DETECTED.`;
+        finalProblemCategory = problemCategory;
+        finalConfidence = 'Local Failover Model (85%)';
+        isFailover = true;
       }
+
+      // --- GITLAB OFFICIAL MCP (DYNAMIC INJECTION AFTER AI THOUGHT) ---
+      if (process.env.GITLAB_PERSONAL_ACCESS_TOKEN) {
+        const gitlabTransport = new StdioClientTransport({
+          command: "npx",
+          args: ["-y", "@modelcontextprotocol/server-gitlab"],
+          env: { ...process.env, GITLAB_PERSONAL_ACCESS_TOKEN: process.env.GITLAB_PERSONAL_ACCESS_TOKEN, GITLAB_API_URL: "https://gitlab.com/api/v4" }
+        });
+        const gitlabClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
+        try {
+          await gitlabClient.connect(gitlabTransport);
+          
+          const dynamicDescription = `
+### 🤖 OmniFlow AI Automated Incident Report
+
+**Location:** \`${metric.location_id}\`
+**Venue Type:** \`${venueType.toUpperCase()}\`
+**Problem Category:** \`${finalProblemCategory.toUpperCase()}\`
+
+#### 🧠 AI Root Cause Deduction:
+> ${finalAgentAnalysis}
+
+#### 🛠️ Autonomous Mitigation Action Taken:
+> ${finalProposedAction}
+> Rerouting Path Activated: \`${finalRoutingPath.join(' -> ')}\`
+
+#### 📊 Raw Telemetry Context:
+**Elastic Physical Logs:** 
+\`\`\`json
+${liveElasticData}
+\`\`\`
+
+*This issue was opened autonomously by the OmniFlow Universal Crowd Intelligence Agent via the Model Context Protocol (MCP).*
+          `.trim();
+
+          const gitlabRes = await gitlabClient.callTool({ 
+            name: "create_issue", 
+            arguments: { 
+              project_id: "HamzaKhanBUIC/omniflow-ai", 
+              title: `[URGENT] Infrastructure Anomaly at ${metric.location_id}`, 
+              description: dynamicDescription 
+            } 
+          });
+          const contentArray = (gitlabRes as any).content;
+          if (contentArray && contentArray.length > 0) {
+            try {
+              const issueJson = JSON.parse(contentArray[0].text);
+              gitlabIssueUrl = issueJson.web_url;
+            } catch (e) {}
+          }
+          console.log(`[GITLAB] Created real issue with dynamic AI context injection!`);
+        } catch (e) { console.error(`[GITLAB] Real creation failed. Error:`, e); }
+        await gitlabTransport.close();
+      }
+
+      return NextResponse.json({
+        status: 'success',
+        agent_analysis: isFailover ? `[FAILOVER AI] ${finalAgentAnalysis}` : `[LIVE GEMINI AI] ${finalAgentAnalysis}`,
+        proposed_action: finalProposedAction,
+        routing_path: finalRoutingPath,
+        historical_confidence: finalConfidence,
+        hitl_required: true,
+        gitlab_issue_url: gitlabIssueUrl,
+        elastic_url: elasticUrl,
+        digital_signage_payload: {
+          target_screens: [isFailover ? targetNodeId : metric.location_id, 'Approaching_Concourses'],
+          message: finalDigitalSignageMessage,
+          problem_category: finalProblemCategory,
+          urgency: 'CRITICAL'
+        }
+      });
     }
 
     return NextResponse.json({ status: 'success', agent_analysis: 'All systems normal. Telemetry nominal. No action required.' });
