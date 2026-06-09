@@ -41,7 +41,7 @@ export async function POST(request: Request) {
             const mongoRes = await mongoClient.callTool({ name: "find", arguments: { database: "stadium", collection: "history", filter: {} } });
             liveMongoData = JSON.stringify((mongoRes as any).content);
             console.log(`[MONGODB] Retrieved real data!`);
-          } catch (e) { console.error(`[MONGODB] Real query failed, using fallback.`); }
+          } catch (e) { console.error(`[MONGODB] Real query failed, using fallback. Error:`, e); }
           await mongoTransport.close();
         }
 
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
             const gitlabRes = await gitlabClient.callTool({ name: "create_issue", arguments: { project_id: "hamzakhanbuic-group/google-cloud-rapid-agent-hackathon", title: `Urgent Infrastructure Failure at ${metric.location_id}`, description: "Turnstile API loop detected. Routing AI executed." } });
             liveGitlabData = JSON.stringify((gitlabRes as any).content);
             console.log(`[GITLAB] Created real issue!`);
-          } catch (e) { console.error(`[GITLAB] Real creation failed, using fallback.`); }
+          } catch (e) { console.error(`[GITLAB] Real creation failed, using fallback. Error:`, e); }
           await gitlabTransport.close();
         }
 
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
             const elasticRes = await elasticClient.callTool({ name: "search", arguments: { index: "*", query: { match_all: {} } } });
             liveElasticData = JSON.stringify((elasticRes as any).content);
             console.log(`[ELASTIC] Retrieved real logs!`);
-          } catch (e) { console.error(`[ELASTIC] Real query failed, using fallback.`); }
+          } catch (e) { console.error(`[ELASTIC] Real query failed, using fallback. Error:`, e); }
           await elasticTransport.close();
         }
 
