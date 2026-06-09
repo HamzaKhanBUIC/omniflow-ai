@@ -3,7 +3,7 @@
   <h1>🌊 OmniFlow AI</h1>
   <p><strong>Universal Autonomous Crowd Intelligence & Infrastructure Routing</strong></p>
   <p>
-    <img src="https://img.shields.io/badge/Gemini-2.5_Flash-blue?style=for-the-badge&logo=google" alt="Gemini" />
+    <img src="https://img.shields.io/badge/Gemini-3.0_Flash-blue?style=for-the-badge&logo=google" alt="Gemini" />
     <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="NextJS" />
     <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
@@ -14,7 +14,7 @@
 
 ## 🏆 Project Overview
 
-**OmniFlow AI** is a cutting-edge autonomous orchestration system designed to manage massive crowd flows during critical disaster scenarios (sports stadiums, music festivals, city gatherings). Built for the **Google Cloud Rapid Agent Hackathon**, OmniFlow utilizes the lightning-fast **Gemini 2.5 Flash** model to ingest real-time multi-channel telemetry (MCPs) and execute life-saving spatial rerouting logic with zero human latency.
+**OmniFlow AI** is a cutting-edge autonomous orchestration system designed to manage massive crowd flows during critical disaster scenarios (sports stadiums, music festivals, city gatherings). Built for the **Google Cloud Rapid Agent Hackathon**, OmniFlow utilizes the lightning-fast **Gemini 3.0 Flash** model to ingest real-time multi-channel telemetry (MCPs) and execute life-saving spatial rerouting logic with zero human latency.
 
 ---
 
@@ -38,7 +38,7 @@ Rather than relying on a single data source, OmniFlow acts as a centralized **Mo
 - **[MONGODB]** Historical spatial density vectors and past-event crush patterns.
 - **[GITLAB]** Automated DevOps incident creation and P0 ticket escalation.
 
-Gemini 2.5 Flash processes this raw firehose and outputs a highly structured **JSON Execution Payload** directly into the venue's Digital Signage systems.
+Gemini 3.0 Flash processes this raw firehose and outputs a highly structured **JSON Execution Payload** directly into the venue's Digital Signage systems.
 
 ---
 
