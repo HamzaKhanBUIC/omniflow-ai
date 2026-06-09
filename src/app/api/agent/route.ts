@@ -155,7 +155,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
 
             response = await Promise.race([
               ai.models.generateContent({
-                model: 'gemini-3.0-flash',
+                model: 'gemini-3.1-flash-lite',
                 contents: prompt,
                 config: {
                   responseMimeType: 'application/json',
