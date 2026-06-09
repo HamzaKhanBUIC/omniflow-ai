@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         if (process.env.MONGODB_CONNECTION_STRING) {
           const mongoTransport = new StdioClientTransport({
             command: "npx",
-            args: ["-y", "mongodb-mcp-server"],
+            args: ["--yes", "--quiet", "mongodb-mcp-server"],
             env: { ...process.env, MONGODB_CONNECTION_STRING: process.env.MONGODB_CONNECTION_STRING }
           });
           const mongoClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
@@ -244,7 +244,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
       if (process.env.GITLAB_PERSONAL_ACCESS_TOKEN) {
         const gitlabTransport = new StdioClientTransport({
           command: "npx",
-          args: ["-y", "@modelcontextprotocol/server-gitlab"],
+          args: ["-y", "--quiet", "@modelcontextprotocol/server-gitlab"],
           env: { ...process.env, GITLAB_PERSONAL_ACCESS_TOKEN: process.env.GITLAB_PERSONAL_ACCESS_TOKEN, GITLAB_API_URL: "https://gitlab.com/api/v4" }
         });
         const gitlabClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
