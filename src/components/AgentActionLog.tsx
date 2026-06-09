@@ -13,11 +13,12 @@ interface AgentActionLogProps {
   terminalLines?: string[];
   gitlabIssueUrl?: string | null;
   elasticUrl?: string | null;
+  historicalMatchId?: string | null;
   onApprove: () => void;
   onReject: () => void;
 }
 
-export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, elasticUrl, onApprove, onReject }: AgentActionLogProps) {
+export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, elasticUrl, historicalMatchId, onApprove, onReject }: AgentActionLogProps) {
   const [visibleLines, setVisibleLines] = React.useState<string[]>([]);
   const [animationFinished, setAnimationFinished] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -182,6 +183,22 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
                 >
                   <span className="text-teal-400 text-xs font-mono tracking-wide flex items-center">
                     <CheckCircle size={14} className="mr-2" /> Live Elastic Instance Created
+                  </span>
+                </motion.div>
+              )}
+
+              {historicalMatchId && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-2 p-3 bg-slate-900 border border-purple-500/30 rounded-xl flex items-center justify-between"
+                >
+                  <span className="text-purple-400 text-xs font-mono tracking-wide flex items-center">
+                    <CheckCircle size={14} className="mr-2" /> Historical MongoDB Match Applied
+                  </span>
+                  <span className="px-3 py-1.5 bg-purple-900/30 text-purple-200 text-[10px] font-bold rounded-lg border border-purple-500/50 uppercase">
+                    Incident #{historicalMatchId.substring(0, 8)}
                   </span>
                 </motion.div>
               )}

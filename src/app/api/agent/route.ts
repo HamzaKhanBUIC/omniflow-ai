@@ -32,6 +32,7 @@ export async function POST(request: Request) {
         console.log(`[AGENT] Connecting to OFFICIAL Partner MCP Servers...`);
 
         // --- MONGODB OFFICIAL MCP ---
+        let historicalMatchId: string | null = null;
         if (process.env.MONGODB_CONNECTION_STRING) {
           const mongoTransport = new StdioClientTransport({
             command: "npx",
@@ -39,12 +40,48 @@ export async function POST(request: Request) {
             env: { ...process.env, MONGODB_CONNECTION_STRING: process.env.MONGODB_CONNECTION_STRING }
           });
           const mongoClient = new Client({ name: "omniflow", version: "1.0.0" }, { capabilities: {} });
-          await mongoClient.connect(mongoTransport);
           try {
-            const mongoRes = await mongoClient.callTool({ name: "find", arguments: { database: "stadium", collection: "history", filter: {} } });
-            liveMongoData = JSON.stringify((mongoRes as any).content);
-            console.log(`[MONGODB] Retrieved real data!`);
-          } catch (e) { console.error(`[MONGODB] Real query failed, using fallback. Error:`, e); }
+            await mongoClient.connect(mongoTransport);
+            
+            // 1. Query for a previous exact same problem
+            const mongoRes = await mongoClient.callTool({ 
+              name: "find", 
+              arguments: { 
+                database: "stadium", 
+                collection: "history", 
+                filter: { problem_category: problemCategory },
+                limit: 1
+              } 
+            });
+            const contentArray = (mongoRes as any).content;
+            if (contentArray && contentArray.length > 0) {
+              const parsedMongo = JSON.parse(contentArray[0].text);
+              if (parsedMongo && parsedMongo.length > 0 && parsedMongo[0]._id) {
+                historicalMatchId = parsedMongo[0]._id;
+              }
+              liveMongoData = JSON.stringify(parsedMongo);
+            }
+
+            // 2. Save the current incident to MongoDB to train future AI runs!
+            await mongoClient.callTool({
+              name: "insert-many",
+              arguments: {
+                database: "stadium",
+                collection: "history",
+                documents: [
+                  {
+                    problem_category: problemCategory,
+                    location_id: metric.location_id,
+                    venue: venueType,
+                    timestamp: new Date().toISOString(),
+                    resolved_successfully: true
+                  }
+                ]
+              }
+            });
+
+            console.log(`[MONGODB] Found historical match: ${historicalMatchId} and saved new incident!`);
+          } catch (e) { console.error(`[MONGODB] Real query/insert failed. Error:`, e); }
           await mongoTransport.close();
         }
 
@@ -257,6 +294,7 @@ ${liveElasticData}
         hitl_required: true,
         gitlab_issue_url: gitlabIssueUrl,
         elastic_url: elasticUrl,
+        historical_match_id: historicalMatchId,
         digital_signage_payload: {
           target_screens: [isFailover ? targetNodeId : metric.location_id, 'Approaching_Concourses'],
           message: finalDigitalSignageMessage,
