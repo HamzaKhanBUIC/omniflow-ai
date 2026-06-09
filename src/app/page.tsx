@@ -27,42 +27,58 @@ const VENUES: Record<VenueType, VenueGraph> = {
   },
   concert: {
     nodes: [
-      { id: 'Main_Stage', type: 'concourse', name: 'Main Stage', capacity: 10000, currentOccupancy: 3000, coordinates: { x: 50, y: 20 } },
+      { id: 'Entrance_Gate', type: 'gate', name: 'Main Entrance', capacity: 4000, currentOccupancy: 800, coordinates: { x: 50, y: 15 } },
+      { id: 'Main_Stage', type: 'concourse', name: 'Main Stage', capacity: 10000, currentOccupancy: 3000, coordinates: { x: 50, y: 35 } },
       { id: 'VIP_Tent', type: 'concourse', name: 'VIP Tent', capacity: 1000, currentOccupancy: 400, coordinates: { x: 80, y: 50 } },
       { id: 'Food_Court', type: 'concourse', name: 'Merch / Food Court', capacity: 3000, currentOccupancy: 1500, coordinates: { x: 20, y: 50 } },
+      { id: 'Medical_Tent', type: 'waypoint', name: 'Medical Tent', capacity: 500, currentOccupancy: 50, coordinates: { x: 80, y: 70 } },
       { id: 'Exit_North', type: 'gate', name: 'Exit North', capacity: 2000, currentOccupancy: 100, coordinates: { x: 50, y: 90 } },
     ],
     edges: [
+      { id: 'f0', sourceId: 'Entrance_Gate', targetId: 'Main_Stage', distance: 100, traversalCost: 10, status: 'open' },
       { id: 'f1', sourceId: 'Main_Stage', targetId: 'VIP_Tent', distance: 80, traversalCost: 8, status: 'open' },
       { id: 'f2', sourceId: 'Main_Stage', targetId: 'Food_Court', distance: 80, traversalCost: 8, status: 'open' },
       { id: 'f3', sourceId: 'Main_Stage', targetId: 'Exit_North', distance: 200, traversalCost: 20, status: 'open' },
       { id: 'f4', sourceId: 'Food_Court', targetId: 'Exit_North', distance: 100, traversalCost: 10, status: 'open' },
+      { id: 'f5', sourceId: 'VIP_Tent', targetId: 'Medical_Tent', distance: 50, traversalCost: 5, status: 'open' },
+      { id: 'f6', sourceId: 'Medical_Tent', targetId: 'Exit_North', distance: 80, traversalCost: 8, status: 'open' },
     ]
   },
   gathering: {
     nodes: [
-      { id: 'Main_Square', type: 'concourse', name: 'Main Celebration Square', capacity: 8000, currentOccupancy: 4000, coordinates: { x: 50, y: 50 } },
+      { id: 'Central_Station', type: 'gate', name: 'Central Transit Hub', capacity: 3000, currentOccupancy: 1000, coordinates: { x: 50, y: 15 } },
+      { id: 'Main_Square', type: 'concourse', name: 'Main Celebration Square', capacity: 8000, currentOccupancy: 4000, coordinates: { x: 50, y: 40 } },
       { id: 'East_Shelter', type: 'concourse', name: 'East Covered Shelter', capacity: 2000, currentOccupancy: 500, coordinates: { x: 80, y: 50 } },
-      { id: 'Central_Station', type: 'gate', name: 'Central Transit Hub', capacity: 3000, currentOccupancy: 1000, coordinates: { x: 50, y: 90 } },
       { id: 'Food_Market', type: 'concourse', name: 'Food Market', capacity: 2000, currentOccupancy: 800, coordinates: { x: 20, y: 50 } },
+      { id: 'Kids_Zone', type: 'waypoint', name: 'Kids Play Zone', capacity: 1000, currentOccupancy: 300, coordinates: { x: 20, y: 70 } },
+      { id: 'Restrooms', type: 'waypoint', name: 'Public Restrooms', capacity: 500, currentOccupancy: 100, coordinates: { x: 80, y: 70 } },
     ],
     edges: [
+      { id: 'g0', sourceId: 'Central_Station', targetId: 'Main_Square', distance: 150, traversalCost: 15, status: 'open' },
       { id: 'g1', sourceId: 'Main_Square', targetId: 'East_Shelter', distance: 50, traversalCost: 5, status: 'open' },
-      { id: 'g2', sourceId: 'Main_Square', targetId: 'Central_Station', distance: 150, traversalCost: 15, status: 'open' },
-      { id: 'g3', sourceId: 'Main_Square', targetId: 'Food_Market', distance: 80, traversalCost: 8, status: 'open' },
+      { id: 'g2', sourceId: 'Main_Square', targetId: 'Food_Market', distance: 80, traversalCost: 8, status: 'open' },
+      { id: 'g3', sourceId: 'Food_Market', targetId: 'Kids_Zone', distance: 40, traversalCost: 4, status: 'open' },
+      { id: 'g4', sourceId: 'East_Shelter', targetId: 'Restrooms', distance: 60, traversalCost: 6, status: 'open' },
+      { id: 'g5', sourceId: 'Kids_Zone', targetId: 'Restrooms', distance: 120, traversalCost: 12, status: 'open' },
     ]
   },
   carnival: {
     nodes: [
-      { id: 'Parade_Route', type: 'concourse', name: 'Main Parade Route', capacity: 5000, currentOccupancy: 3000, coordinates: { x: 50, y: 50 } },
-      { id: 'Ferris_Wheel', type: 'waypoint', name: 'Giant Ferris Wheel', capacity: 1000, currentOccupancy: 800, coordinates: { x: 80, y: 20 } },
-      { id: 'Beer_Garden', type: 'concourse', name: 'Beer Garden', capacity: 2000, currentOccupancy: 1500, coordinates: { x: 20, y: 50 } },
+      { id: 'Ticket_Booth', type: 'gate', name: 'Main Ticket Booth', capacity: 2000, currentOccupancy: 400, coordinates: { x: 50, y: 15 } },
+      { id: 'Parade_Route', type: 'concourse', name: 'Main Parade Route', capacity: 5000, currentOccupancy: 3000, coordinates: { x: 50, y: 40 } },
+      { id: 'Ferris_Wheel', type: 'waypoint', name: 'Giant Ferris Wheel', capacity: 1000, currentOccupancy: 800, coordinates: { x: 80, y: 40 } },
+      { id: 'Beer_Garden', type: 'concourse', name: 'Beer Garden', capacity: 2000, currentOccupancy: 1500, coordinates: { x: 20, y: 60 } },
+      { id: 'Game_Stalls', type: 'waypoint', name: 'Arcade & Games', capacity: 1500, currentOccupancy: 600, coordinates: { x: 80, y: 70 } },
       { id: 'Exit_Plaza', type: 'gate', name: 'Exit Plaza', capacity: 4000, currentOccupancy: 500, coordinates: { x: 50, y: 90 } },
     ],
     edges: [
+      { id: 'c0', sourceId: 'Ticket_Booth', targetId: 'Parade_Route', distance: 80, traversalCost: 8, status: 'open' },
       { id: 'c1', sourceId: 'Parade_Route', targetId: 'Ferris_Wheel', distance: 100, traversalCost: 10, status: 'open' },
       { id: 'c2', sourceId: 'Parade_Route', targetId: 'Beer_Garden', distance: 60, traversalCost: 6, status: 'open' },
-      { id: 'c3', sourceId: 'Parade_Route', targetId: 'Exit_Plaza', distance: 200, traversalCost: 20, status: 'open' },
+      { id: 'c3', sourceId: 'Ferris_Wheel', targetId: 'Game_Stalls', distance: 70, traversalCost: 7, status: 'open' },
+      { id: 'c4', sourceId: 'Beer_Garden', targetId: 'Exit_Plaza', distance: 100, traversalCost: 10, status: 'open' },
+      { id: 'c5', sourceId: 'Game_Stalls', targetId: 'Exit_Plaza', distance: 120, traversalCost: 12, status: 'open' },
+      { id: 'c6', sourceId: 'Parade_Route', targetId: 'Exit_Plaza', distance: 200, traversalCost: 20, status: 'open' },
     ]
   }
 };
