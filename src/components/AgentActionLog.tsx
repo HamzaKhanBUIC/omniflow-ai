@@ -181,11 +181,8 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
                   className="mt-2 p-3 bg-slate-900 border border-teal-500/30 rounded-xl flex items-center justify-between"
                 >
                   <span className="text-teal-400 text-xs font-mono tracking-wide flex items-center">
-                    <CheckCircle size={14} className="mr-2" /> Live Elastic Data Queried
+                    <CheckCircle size={14} className="mr-2" /> Live Elastic Instance Created
                   </span>
-                  <a href={elasticUrl} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-teal-900/50 hover:bg-teal-800 text-teal-100 text-[10px] uppercase font-bold rounded-lg border border-teal-500/50 transition-colors cursor-pointer">
-                    View Cloud Instance ↗
-                  </a>
                 </motion.div>
               )}
 
