@@ -122,15 +122,29 @@ export default function Dashboard() {
     const selectedProblem = activeProblem === 'random' ? problemTypes[Math.floor(Math.random() * problemTypes.length)] : activeProblem;
 
     // Pick target node based on venue
+    // Pick target node based on venue and problem type
     let targetNodeId = graph.nodes[0].id;
+    
     if (selectedProblem === 'resource_exhaustion') {
-        targetNodeId = activeVenue === 'stadium' ? 'Food_Court' : (activeVenue === 'concert' ? 'Food_Court' : (activeVenue === 'carnival' ? 'Beer_Garden' : graph.nodes[0].id));
+        if (activeVenue === 'stadium') targetNodeId = 'Food_Court';
+        else if (activeVenue === 'concert') targetNodeId = 'Food_Court';
+        else if (activeVenue === 'gathering') targetNodeId = 'Food_Market';
+        else if (activeVenue === 'carnival') targetNodeId = 'Beer_Garden';
     } else if (selectedProblem === 'transit_failure') {
-        targetNodeId = activeVenue === 'stadium' ? 'Metro_Station' : (activeVenue === 'gathering' ? 'Central_Station' : graph.nodes[0].id);
+        if (activeVenue === 'stadium') targetNodeId = 'Metro_Station';
+        else if (activeVenue === 'concert') targetNodeId = 'Exit_North';
+        else if (activeVenue === 'gathering') targetNodeId = 'Central_Station';
+        else if (activeVenue === 'carnival') targetNodeId = 'Exit_Plaza';
     } else if (selectedProblem === 'bottleneck') {
-        targetNodeId = activeVenue === 'stadium' ? 'Gate_A' : (activeVenue === 'concert' ? 'Main_Stage' : (activeVenue === 'carnival' ? 'Parade_Route' : graph.nodes[0].id));
+        if (activeVenue === 'stadium') targetNodeId = 'Gate_A';
+        else if (activeVenue === 'concert') targetNodeId = 'VIP_Tent';
+        else if (activeVenue === 'gathering') targetNodeId = 'Central_Station';
+        else if (activeVenue === 'carnival') targetNodeId = 'Parade_Route';
     } else if (selectedProblem === 'surge') {
-        targetNodeId = activeVenue === 'stadium' ? 'Concourse_1' : graph.nodes[0].id;
+        if (activeVenue === 'stadium') targetNodeId = 'Concourse_1';
+        else if (activeVenue === 'concert') targetNodeId = 'Main_Stage';
+        else if (activeVenue === 'gathering') targetNodeId = 'East_Shelter';
+        else if (activeVenue === 'carnival') targetNodeId = 'Ferris_Wheel';
     }
     
     setActiveTargetNode(targetNodeId);
