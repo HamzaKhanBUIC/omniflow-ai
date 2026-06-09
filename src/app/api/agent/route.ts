@@ -26,6 +26,7 @@ export async function POST(request: Request) {
       let liveGitlabData = JSON.stringify({ issue_created: true, id: "#8492", assignee: "Security Engineering" });
 
       let gitlabIssueUrl: string | null = null;
+      let elasticUrl: string | null = null;
 
       try {
         console.log(`[AGENT] Connecting to OFFICIAL Partner MCP Servers...`);
@@ -83,6 +84,7 @@ export async function POST(request: Request) {
             await elasticClient.connect(elasticTransport);
             const elasticRes = await elasticClient.callTool({ name: "search", arguments: { index: "*", queryBody: { query: { match_all: {} } } } });
             liveElasticData = JSON.stringify((elasticRes as any).content);
+            elasticUrl = process.env.ELASTICSEARCH_URL; // Exposing only the safe base URL, no API keys
             console.log(`[ELASTIC] Retrieved real logs!`);
           } catch (e) { console.error(`[ELASTIC] Real query failed, using fallback. Error:`, e); }
           await elasticTransport.close();
@@ -199,6 +201,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
           historical_confidence: 'Live Deduction (100%)',
           hitl_required: true,
           gitlab_issue_url: gitlabIssueUrl,
+          elastic_url: elasticUrl,
           digital_signage_payload: {
             target_screens: [metric.location_id, 'Approaching_Concourses'],
             message: geminiOutput.digital_signage_message,
@@ -218,6 +221,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
           historical_confidence: 'Local Failover Model (85%)',
           hitl_required: true,
           gitlab_issue_url: gitlabIssueUrl,
+          elastic_url: elasticUrl,
           digital_signage_payload: {
             target_screens: [targetNodeId, 'Approaching_Concourses'],
             message: `URGENT: Proceed to alternative routes. ${problemCategory.toUpperCase()} DETECTED.`,

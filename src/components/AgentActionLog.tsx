@@ -12,11 +12,12 @@ interface AgentActionLogProps {
   isSimulating: boolean;
   terminalLines?: string[];
   gitlabIssueUrl?: string | null;
+  elasticUrl?: string | null;
   onApprove: () => void;
   onReject: () => void;
 }
 
-export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, onApprove, onReject }: AgentActionLogProps) {
+export default function AgentActionLog({ analysis, proposedAction, hitlRequired, digitalSignagePayload, isSimulating, terminalLines = [], gitlabIssueUrl, elasticUrl, onApprove, onReject }: AgentActionLogProps) {
   const [visibleLines, setVisibleLines] = React.useState<string[]>([]);
   const [animationFinished, setAnimationFinished] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -168,6 +169,22 @@ export default function AgentActionLog({ analysis, proposedAction, hitlRequired,
                   </span>
                   <a href={gitlabIssueUrl} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-blue-900/50 hover:bg-blue-800 text-blue-100 text-[10px] uppercase font-bold rounded-lg border border-blue-500/50 transition-colors cursor-pointer">
                     View on GitLab ↗
+                  </a>
+                </motion.div>
+              )}
+
+              {elasticUrl && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.38 }}
+                  className="mt-2 p-3 bg-slate-900 border border-teal-500/30 rounded-xl flex items-center justify-between"
+                >
+                  <span className="text-teal-400 text-xs font-mono tracking-wide flex items-center">
+                    <CheckCircle size={14} className="mr-2" /> Live Elastic Data Queried
+                  </span>
+                  <a href={elasticUrl} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-teal-900/50 hover:bg-teal-800 text-teal-100 text-[10px] uppercase font-bold rounded-lg border border-teal-500/50 transition-colors cursor-pointer">
+                    View Cloud Instance ↗
                   </a>
                 </motion.div>
               )}

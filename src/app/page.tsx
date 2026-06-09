@@ -84,6 +84,7 @@ export default function Dashboard() {
   const [aiRoutingPath, setAiRoutingPath] = useState<string[]>([]);
   const [activeTargetNode, setActiveTargetNode] = useState<string | null>(null);
   const [gitlabIssueUrl, setGitlabIssueUrl] = useState<string | null>(null);
+  const [elasticUrl, setElasticUrl] = useState<string | null>(null);
   
   // Create a stable graph representation to allow mutations on approval
   const [displayGraph, setDisplayGraph] = useState<VenueGraph | null>(null);
@@ -106,6 +107,7 @@ export default function Dashboard() {
     setSimulationActive(false);
     setTerminalLines([]);
     setGitlabIssueUrl(null);
+    setElasticUrl(null);
   };
 
   // Background stream simulation removed to prevent UI jumping.
@@ -210,6 +212,7 @@ export default function Dashboard() {
         setHitlRequired(true);
         setAiRoutingPath(data.routing_path || []);
         setGitlabIssueUrl(data.gitlab_issue_url || null);
+        setElasticUrl(data.elastic_url || null);
       } else if (data.status === 'error') {
         setAgentAnalysis(`[SYSTEM ERROR] Failed to run AI Analysis: ${data.message || 'Check terminal logs.'}`);
         setSimulationActive(false);
@@ -319,6 +322,7 @@ export default function Dashboard() {
               isSimulating={simulationActive}
               terminalLines={terminalLines}
               gitlabIssueUrl={gitlabIssueUrl}
+              elasticUrl={elasticUrl}
               onApprove={handleApprove}
               onReject={handleReject}
             />
