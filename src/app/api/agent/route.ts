@@ -202,7 +202,7 @@ Based on the Dynatrace and Elastic critical errors above, deduce the physical cr
         
         return NextResponse.json({
           status: 'success',
-          agent_analysis: `[FAILOVER AI] I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing (Error: ${(lastError as any)?.message || 'Unknown'}). I am executing backup spatial logic!`,
+          agent_analysis: `[FAILOVER AI] I detected a critical ${problemCategory} at the location. The primary Gemini API is overloaded or failing (Error: ${(geminiError as any)?.message || 'Unknown'}). I am executing backup spatial logic!`,
           proposed_action: `Deploying Emergency Digital Signage to reroute crowd away from ${targetNodeId}.`,
           routing_path: [targetNodeId, currentGraph.nodes.find(n => n.id !== targetNodeId)?.id || 'Exit_South'],
           historical_confidence: 'Local Failover Model (85%)',
