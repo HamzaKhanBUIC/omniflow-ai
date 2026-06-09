@@ -27,12 +27,19 @@ export async function POST(request: Request) {
 
       let gitlabIssueUrl: string | null = null;
       let elasticUrl: string | null = null;
+      
+      // Determine problem category (mocked from frontend payload for tool params)
+      let problemCategory = "bottleneck";
+      if (metric.event_type.includes("OVERLOAD") || log.message.toLowerCase().includes('surge')) problemCategory = "surge";
+      if (metric.event_type.includes("POS") || log.message.toLowerCase().includes('exhaustion')) problemCategory = "resource_exhaustion";
+      if (metric.event_type.includes("TRANSIT")) problemCategory = "transit_failure";
+
+      let historicalMatchId: string | null = null;
 
       try {
         console.log(`[AGENT] Connecting to OFFICIAL Partner MCP Servers...`);
 
         // --- MONGODB OFFICIAL MCP ---
-        let historicalMatchId: string | null = null;
         if (process.env.MONGODB_CONNECTION_STRING) {
           const mongoTransport = new StdioClientTransport({
             command: "npx",
@@ -108,12 +115,6 @@ export async function POST(request: Request) {
       }
 
       console.log(`[AGENT] Dispatching to Gemini 3.1 Flash Lite...`);
-
-      // Determine problem category (mocked from frontend payload for tool params)
-      let problemCategory = "bottleneck";
-      if (metric.event_type.includes("OVERLOAD")) problemCategory = "surge";
-      if (metric.event_type.includes("POS")) problemCategory = "resource_exhaustion";
-      if (metric.event_type.includes("TRANSIT")) problemCategory = "transit_failure";
 
       // --- GEMINI AI CALL ---
       const prompt = `

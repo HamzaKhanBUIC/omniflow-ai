@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "clean:gemini": "node gemini-auto-storage-cleaner.mjs"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.4.2",
