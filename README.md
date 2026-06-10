@@ -5,9 +5,9 @@ An advanced, self-healing, agentic crowd control and infrastructure management s
 ## 🌟 Key Features
 - **Live Venue Topology Graph**: Real-time rendering of physical spaces (Stadiums, Concourses, Transit Hubs) with dynamic edge weights based on crowd density.
 - **Agentic AI Mitigation**: Uses **Gemini 3.1 Flash Lite** to analyze live ElasticSearch logs and Dynatrace metrics, dynamically proposing routing solutions.
-- **Model Context Protocol (MCP)**: Natively integrates with MongoDB, GitLab, and ElasticSearch using official MCP tool bindings.
+- **Model Context Protocol (MCP)**: Natively integrates with [MongoDB Atlas](https://www.mongodb.com/products/platform/atlas-database), GitLab, and ElasticSearch using official MCP tool bindings.
 - **Self-Healing Infrastructure**: Automatically spawns background `child_process` routines to purge orphaned Gemini storage files if API quotas are threatened.
-- **Historical Learning Loop**: Solved incidents are permanently saved to MongoDB, allowing the agent to query past successes when facing new anomalies.
+- **Historical Learning Loop (MongoDB)**: Solved incidents are permanently saved to your live **MongoDB Atlas** cluster. The AI queries past successes when facing new anomalies to augment its decision-making context.
 - **Automated Failover**: Gracefully falls back to a deterministic local spatial algorithm if the cloud LLM fails.
 
 ---
