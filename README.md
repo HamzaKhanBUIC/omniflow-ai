@@ -1,139 +1,121 @@
-<div align="center">
-  <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" width="60" />
-  <h1>🚀 OmniFlow AI</h1>
-  <p><b>Autonomous Crowd Infrastructure & Spatial Reasoning Agent</b></p>
+# OmniFlow AI: Autonomous Crowd Infrastructure & Spatial Reasoning Agent
 
-  <p>
-    <img src="https://img.shields.io/badge/Google%20Cloud-Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Google Cloud" />
-    <img src="https://img.shields.io/badge/Gemini-3.1%20Flash-8E75B2?style=for-the-badge&logo=googlebard&logoColor=white" alt="Gemini" />
-    <img src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
-    <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-    <img src="https://img.shields.io/badge/GitLab-DevOps-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white" alt="GitLab" />
-  </p>
-</div>
+> Event-driven spatial reasoning and infrastructure triage agent utilizing Model Context Protocol (MCP) tool bindings, Google Cloud Run, and Gemini reasoning.
+
+[![Google Cloud Run](https://img.shields.io/badge/Deploy-Google_Cloud_Run-4285F4.svg?logo=googlecloud)](https://cloud.google.com/run)
+[![Next.js 14](https://img.shields.io/badge/Next.js-14-black.svg?logo=next.js)](https://nextjs.org/)
+[![Model Context Protocol](https://img.shields.io/badge/Standard-MCP-8A2BE2.svg)](https://modelcontextprotocol.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-> **OmniFlow AI** is an advanced, self-healing, continuous-learning infrastructure management system built for the **Google Cloud Rapid Agent Hackathon**. It leverages real-time telemetry, spatial graph algorithms, and the Gemini API (via MCP) to dynamically route crowds, mitigate disasters, and auto-heal its own infrastructure.
+## Overview
+
+Large-scale venue and transit operations require rapid spatial coordination during crowd congestion bottlenecks or emergency sector closures.
+
+**OmniFlow AI** is an infrastructure triage and spatial routing system that:
+1. Ingests simulated telemetry feeds via Elasticsearch MCP connectors.
+2. Performs spatial graph routing and anomaly analysis using Gemini models.
+3. Retrieves historical incident resolutions from MongoDB Atlas.
+4. Generates human-reviewed mitigation workflows and creates automated incident tickets via GitLab MCP endpoints.
 
 ---
 
-## 🏗️ System Architecture
-
-OmniFlow isn't just a chatbot—it's a multi-agent orchestration engine.
+## System Architecture
 
 ```mermaid
-graph TD;
-    A[Hardware Sensors / Cameras] -->|Live Telemetry| B(Elasticsearch MCP);
-    B --> C{OmniFlow Next.js Agent};
-    C <-->|Spatial Reasoning| D((Gemini 3.1 Flash));
-    C <-->|Historical Context| E[(MongoDB Atlas MCP)];
-    C -->|Mitigation Plan| F[Human-in-the-Loop UI];
-    F -->|Approve| G[Execute Actions];
-    G -->|Create DevOps Ticket| H[GitLab MCP];
-    G -->|Update Memory| E;
+graph TD
+    A[Telemetry / Sensor Feeds] -->|Ingestion| B(Elasticsearch MCP)
+    B --> C{OmniFlow Orchestration Engine}
+    C <-->|Spatial Reasoning| D((Gemini 2.5 / 3.1 Flash))
+    C <-->|Incident Memory| E[(MongoDB Atlas MCP)]
+    C -->|Mitigation Plan| F[Human-in-the-Loop Cockpit]
+    F -->|Operator Approval| G[Execute Infrastructure Actions]
+    G -->|Create DevOps Ticket| H[GitLab MCP]
+    G -->|Update Resolution Vector| E
 ```
 
 ---
 
-## 🏆 Hackathon Project Details
+## Core Capabilities
 
-### 💡 Inspiration: The Crisis of Reaction Time
-Modern mass-gathering events—from stadiums hosting the World Cup to massive music festivals—are logistical nightmares. Infrastructure is managed by human operators staring at fragmented, siloed dashboards. When a massive crowd bottleneck occurs, or a transit hub fails, seconds matter. By the time human operators identify the problem across multiple screens, formulate a mitigation plan, and contact DevOps to update digital signage or reroute traffic, it's often too late. 
-
-We asked ourselves a critical question: *What if an Agentic AI could instantly ingest an entire venue's infrastructure telemetry, cross-reference historical disaster solutions from past events, and generate executable spatial mitigation plans in real-time?* Thus, OmniFlow AI was born.
-
-### ⚙️ What it does: The Autonomous Loop
-OmniFlow AI operates in a flawless, multi-step agentic loop:
-1. **📡 Detects & Ingests:** Monitors simulated, high-speed telemetry firehose data from hardware endpoints.
-2. **🧠 Spatial Reasoning:** Dispatches raw anomaly data to **Gemini 3.1 Flash** to execute live spatial reasoning based on the physical layout of the venue.
-3. **🗄️ Continuous Learning via Memory:** Utilizes the **Model Context Protocol (MCP)** to query a **MongoDB Atlas** database. It searches its own "memory bank" to find out how this specific venue solved similar problems in the past.
-4. **🚦 Execution & HITL:** Drafts a highly precise mitigation plan. Because it controls critical physical infrastructure, it halts execution to request **Human-In-The-Loop (HITL)** authorization via an interactive UI.
-5. **🦊 DevOps & Self-Updating:** Once authorized, the agent uses MCP to automatically generate a live **GitLab** DevOps ticket. Finally, it physically writes the new solution back into MongoDB Atlas, permanently "learning" from the incident.
-
-### 🚧 Challenges we ran into: Pushing Cloud Limits
-Integrating three distinct enterprise MCP servers concurrently inside a single Next.js API route proved extremely taxing on server memory. During testing, when the AI prompted multiple tools simultaneously, our Google Cloud Run instance suffered a massive Out of Memory (OOM) fatal crash. We had to live-debug the Google Cloud Run logs and dynamically provision a heavier, custom **4GB RAM instance** to handle the massive multi-agent processing load required by the AI pipeline. 
-
-### 🛡️ The Auto-Healer
-We built a custom deterministic "Auto-Healer" algorithm. If the primary Gemini API connection times out or fails due to network degradation, our system automatically falls back to a deterministic spatial execution plan—ensuring the infrastructure is never left unmanaged.
+- **MCP Tool Protocol Integration**: Standardized tool calling interfaces connecting Elasticsearch (telemetry queries), MongoDB Atlas (memory persistence), and GitLab (automated issue creation).
+- **Spatial Incident Triage**: Analyzes physical layout graphs and sensor choke points to calculate alternative pedestrian routes.
+- **Human-in-the-Loop Authorization**: Critical physical changes (digital signage updates, turnstile gates) require operator sign-off before downstream dispatch.
+- **Deterministic Failover Engine**: If external LLM APIs experience rate limits or timeouts, the engine falls back to pre-compiled deterministic routing heuristics.
 
 ---
 
-## 💻 Local Development Setup
+## Repository Structure
 
-### 1. Prerequisites
-- Node.js (v18+)
-- Git
-- Google Cloud / Gemini API Keys
-
-### 2. Installation
-```bash
-git clone https://github.com/HamzaKhanBUIC/omniflow-ai.git
-cd omniflow-ai
-npm install
 ```
-
-### 3. Environment Variables
-Create a `.env.local` file in the root directory and copy the contents from `.env.example`. You will need to fill in your API keys:
-```env
-GEMINI_API_KEY="your_gemini_key"
-GITLAB_PERSONAL_ACCESS_TOKEN="your_gitlab_token"
-MONGODB_CONNECTION_STRING="your_mongodb_uri"
-ELASTICSEARCH_URL="your_elastic_url"
-ELASTICSEARCH_API_KEY="your_elastic_key"
+.
+├── src/
+│   ├── app/                  # Next.js App Router and API endpoints
+│   ├── components/           # Spatial map views and incident cockpit
+│   ├── lib/
+│   │   ├── mcp/              # MCP client integrations (GitLab, Mongo, Elastic)
+│   │   ├── gemini.ts         # Gemini spatial reasoning interface
+│   │   └── auto-healer.ts    # Deterministic heuristic fallback engine
+├── public/                   # Static assets and venue map definitions
+├── package.json
+└── README.md
 ```
-
-### 4. Run the Application
-```bash
-npm run dev
-```
-Navigate to `http://localhost:3000` to view the dashboard!
 
 ---
 
-## ☁️ Google Cloud Run Deployment
+## Getting Started
 
-OmniFlow is designed to be deployed as a serverless container on **Google Cloud Run** using native Cloud Buildpacks.
+### Prerequisites
+- Node.js 18 or higher
+- API credentials for Gemini, MongoDB Atlas, and GitLab (optional for ticketing)
 
-### Step 1: Authenticate
+### Local Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/HamzaKhanBUIC/omniflow-ai.git
+   cd omniflow-ai
+   npm install
+   ```
+
+2. **Configure environment variables**:
+   Create `.env.local`:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key
+   GITLAB_PERSONAL_ACCESS_TOKEN=your_gitlab_token
+   MONGODB_CONNECTION_STRING=your_mongodb_uri
+   ELASTICSEARCH_URL=your_elastic_url
+   ELASTICSEARCH_API_KEY=your_elastic_key
+   ```
+
+3. **Start development server**:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3000` in your browser.
+
+---
+
+## Google Cloud Run Deployment
+
 ```bash
-gcloud auth login
-```
+# Build container image via Cloud Build
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/omniflow-ai
 
-### Step 2: Deploy to Cloud Run
-Deploy the app directly from your terminal. Google Cloud will automatically detect the Next.js framework, containerize it, and deploy it to the edge:
-```bash
-gcloud run deploy omniflow-ai --source . --region us-central1 --allow-unauthenticated
-```
-
-### Step 3: Scale Memory for Heavy MCP Execution
-Because OmniFlow simultaneously executes complex Node-based MCP connections to multiple enterprise platforms, it requires a high-memory environment to prevent OOM (Out of Memory) crashes:
-```bash
-gcloud run services update omniflow-ai --memory=4Gi --region us-central1
-```
-
-### Step 4: Inject API Keys
-Once deployed, inject your secure environment variables into the live Cloud Run instance:
-```bash
-gcloud run services update omniflow-ai \
+# Deploy to Cloud Run with 2 vCPU / 4 GB configuration
+gcloud run deploy omniflow-ai \
+  --image gcr.io/YOUR_PROJECT_ID/omniflow-ai \
+  --platform managed \
   --region us-central1 \
-  --set-env-vars="GEMINI_API_KEY=...,GITLAB_PERSONAL_ACCESS_TOKEN=...,MONGODB_CONNECTION_STRING=...,ELASTICSEARCH_URL=...,ELASTICSEARCH_API_KEY=..."
+  --memory 4Gi \
+  --cpu 2 \
+  --allow-unauthenticated \
+  --set-env-vars GEMINI_API_KEY=your_key
 ```
 
 ---
 
-## 🛠️ Infrastructure Maintenance
+## License
 
-### Gemini Auto Storage Cleaner
-If your Gemini API File storage becomes bloated, OmniFlow includes a self-healing script to purge orphaned files across all configured keys.
-
-To run it manually locally:
-```bash
-npm run clean:gemini
-```
-*(Note: OmniFlow will automatically trigger this in the background if it detects an API quota anomaly during a live simulation).*
-
----
-<div align="center">
-  <b>Built with ❤️ for the Google Cloud Hackathon</b>
-</div>
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
