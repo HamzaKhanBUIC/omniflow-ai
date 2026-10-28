@@ -3,7 +3,7 @@
 > A Next.js demo of an incident-triage agent: when a simulated venue anomaly appears, it gathers context through MCP servers, asks Gemini for a crowd-reroute plan, and shows the plan in an operator approval screen.
 
 **Status:** Prototype with simulated telemetry. No digital signage or turnstile is actually controlled.
-**Demo:** none linked yet. The app has no hosted instance; run it locally (see Quickstart).
+**Demo:** [▶ Demo video](https://youtu.be/eTiGc4ZScxg) · No hosted instance; run it locally (see Quickstart).
 
 ---
 
